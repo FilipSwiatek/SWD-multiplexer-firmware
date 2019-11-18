@@ -14,7 +14,7 @@ message(STATUS "Target platform ${TARGET}")
 
 include(functions.cmake)
 include(${PLATFORM_PATH}/toolchain.cmake)
-load_submodules()
+
 
 project(PROJECT_NAME C CXX ASM)
 
