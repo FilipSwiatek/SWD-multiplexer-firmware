@@ -1,5 +1,5 @@
-set (CWARN "-Wall -Wstrict-prototypes -Wextra -Werror")
-set (CXXWARN "-Wall -Wextra -Werror")
+set (CWARN "-Wall -Wstrict-prototypes -Wextra")
+set (CXXWARN "-Wall -Wextra")
 set(CTUNING "-fomit-frame-pointer -ffunction-sections -fdata-sections")
 
 ReadVariables(${CMAKE_CURRENT_LIST_DIR}/Makefile "CPU")        # get flag -DCPU = -mcpu=cortex-mXX
