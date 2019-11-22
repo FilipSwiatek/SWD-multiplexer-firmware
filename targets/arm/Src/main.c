@@ -6,16 +6,14 @@
 #include <stdbool.h>
 
 
-
-
 void Error_Handler(void);
 
 
 int main(void) {
     GPIO_Init();
-    if(SystemClock_Config()== false) Error_Handler();
+    if(SystemClock_Config() == false) Error_Handler();
     if(USART1_UART_Init() == false) Error_Handler();
-    USB_DEVICE_Init();
+    if(USB_DEVICE_Init() == false) Error_Handler();
 
 
     while (1) {
@@ -24,10 +22,46 @@ int main(void) {
 }
 
 
-void Error_Handler(void)
-{
+void Error_Handler(void){
     HAL_GPIO_WritePin(ERROR_GPIO_GPIO_Port, ERROR_GPIO_Pin, GPIO_PIN_RESET);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -41,11 +75,6 @@ void Error_Handler(void)
   */
 void assert_failed(uint8_t *file, uint32_t line)
 {
-  /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
-     tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-  /* USER CODE END 6 */
-}
-#endif /* USE_FULL_ASSERT */
 
+}
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
