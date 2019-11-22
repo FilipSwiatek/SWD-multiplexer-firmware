@@ -4,7 +4,7 @@
 #include "stm32f1xx_hal.h"
 #include "gpio.h"
 
-void MX_GPIO_Init(void)
+void GPIO_Init(void)
 {
     GPIO_InitTypeDef GPIO_InitStruct = {0};
 

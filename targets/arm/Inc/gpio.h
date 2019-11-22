@@ -43,6 +43,6 @@
 #define HERD_RES_ALL_PIN GPIO_PIN_5
 #define USB_POWER_INDICATOR_PIN GPIO_PIN_8
 
-
+void GPIO_Init();
 
 #endif //PROJECT_NAME_GPIO_H

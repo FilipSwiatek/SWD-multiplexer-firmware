@@ -55,7 +55,7 @@ include_directories(
 
 set(SOURCES
 		${SOURCES_AUTO} ${C_SOURCES}
-        Inc/gpio.h Src/gpio.c)
+        Inc/gpio.h Src/gpio.c Src/uart.c Inc/uart.h)
 
 add_executable(${NAME} ${SOURCES})
 
