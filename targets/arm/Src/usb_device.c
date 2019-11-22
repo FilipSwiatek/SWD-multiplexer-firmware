@@ -85,10 +85,8 @@ bool USB_DEVICE_Init(void)
   {
     return false;
   }
+  return true;
 
-  /* USER CODE BEGIN USB_DEVICE_Init_PostTreatment */
-  
-  /* USER CODE END USB_DEVICE_Init_PostTreatment */
 }
 
 /**

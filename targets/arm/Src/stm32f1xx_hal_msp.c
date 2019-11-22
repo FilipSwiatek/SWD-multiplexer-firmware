@@ -113,9 +113,10 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /* USER CODE BEGIN USART1_MspInit 1 */
-
-  /* USER CODE END USART1_MspInit 1 */
+      /*##-3- Configure the NVIC for UART ########################################*/
+      /* NVIC for USART1 */
+      HAL_NVIC_SetPriority(USART1_IRQn, 0, 1);
+      HAL_NVIC_EnableIRQ(USART1_IRQn);
   }
 
 }
@@ -130,9 +131,8 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* huart)
 {
   if(huart->Instance==USART1)
   {
-  /* USER CODE BEGIN USART1_MspDeInit 0 */
+    HAL_NVIC_DisableIRQ(USART1_IRQn);
 
-  /* USER CODE END USART1_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_USART1_CLK_DISABLE();
   

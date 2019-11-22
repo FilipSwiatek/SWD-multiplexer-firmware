@@ -15,8 +15,12 @@ int main(void) {
     if(USART1_UART_Init() == false) Error_Handler();
     if(USB_DEVICE_Init() == false) Error_Handler();
 
-
+    char c;
     while (1) {
+
+        if(USART_GetChar(&c)){
+            USART_PutChar(c);
+        }
 
     }
 }
@@ -78,3 +82,4 @@ void assert_failed(uint8_t *file, uint32_t line)
 
 }
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+#endif  //USE_FULL_ASSERT
