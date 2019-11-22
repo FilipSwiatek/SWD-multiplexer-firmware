@@ -1,5 +1,6 @@
 #include "main.h"
 #include "usb_device.h"
+#include "gpio.h"
 
 
 UART_HandleTypeDef huart1;
@@ -15,13 +16,13 @@ static void MX_USART1_UART_Init(void);
 int main(void) {
 
     SystemClock_Config();
-
     MX_GPIO_Init();
     MX_USART1_UART_Init();
     MX_USB_DEVICE_Init();
 
 
     while (1) {
+
     }
 }
 
@@ -83,8 +84,6 @@ static void MX_USART1_UART_Init(void)
 
 }
 
-
-#define CH7_INDICATOR_PIN 3
 
 
 static void MX_GPIO_Init(void)
@@ -241,7 +240,7 @@ void Error_Handler(void)
   * @retval None
   */
 void assert_failed(uint8_t *file, uint32_t line)
-{ 
+{
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
      tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
