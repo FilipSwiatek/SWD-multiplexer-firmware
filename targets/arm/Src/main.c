@@ -1,113 +1,31 @@
-/* USER CODE BEGIN Header */
-/**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
-  * All rights reserved.</center></h2>
-  *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
-  *
-  ******************************************************************************
-  */
-/* USER CODE END Header */
-
-/* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "usb_device.h"
 
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
 
-/* USER CODE END Includes */
-
-/* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN PTD */
-
-/* USER CODE END PTD */
-
-/* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
-/* USER CODE END PD */
-
-/* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
-
-/* USER CODE END PM */
-
-/* Private variables ---------------------------------------------------------*/
 UART_HandleTypeDef huart1;
 
-/* USER CODE BEGIN PV */
-
-/* USER CODE END PV */
-
-/* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART1_UART_Init(void);
-/* USER CODE BEGIN PFP */
 
-/* USER CODE END PFP */
 
-/* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
 
-/* USER CODE END 0 */
 
-/**
-  * @brief  The application entry point.
-  * @retval int
-  */
+
 int main(void) {
-    /* USER CODE BEGIN 1 */
 
-    /* USER CODE END 1 */
-
-
-    /* MCU Configuration--------------------------------------------------------*/
-
-    /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-    HAL_Init();
-
-    /* USER CODE BEGIN Init */
-
-    /* USER CODE END Init */
-
-    /* Configure the system clock */
     SystemClock_Config();
 
-    /* USER CODE BEGIN SysInit */
-
-    /* USER CODE END SysInit */
-
-    /* Initialize all configured peripherals */
     MX_GPIO_Init();
     MX_USART1_UART_Init();
     MX_USB_DEVICE_Init();
-    /* USER CODE BEGIN 2 */
 
-    /* USER CODE END 2 */
-
-    /* Infinite loop */
-    /* USER CODE BEGIN WHILE */
-
-    HAL_GPIO_WritePin(ERROR_GPIO_GPIO_Port, ERROR_GPIO_Pin, GPIO_PIN_SET);
 
     while (1) {
     }
 }
 
-/**
-  * @brief System Clock Configuration
-  * @retval None
-  */
+
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
@@ -127,8 +45,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  /** Initializes the CPU, AHB and APB busses clocks 
-  */
+
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
@@ -148,21 +65,9 @@ void SystemClock_Config(void)
   }
 }
 
-/**
-  * @brief USART1 Initialization Function
-  * @param None
-  * @retval None
-  */
+
 static void MX_USART1_UART_Init(void)
 {
-
-  /* USER CODE BEGIN USART1_Init 0 */
-
-  /* USER CODE END USART1_Init 0 */
-
-  /* USER CODE BEGIN USART1_Init 1 */
-
-  /* USER CODE END USART1_Init 1 */
   huart1.Instance = USART1;
   huart1.Init.BaudRate = 115200;
   huart1.Init.WordLength = UART_WORDLENGTH_8B;
@@ -175,17 +80,13 @@ static void MX_USART1_UART_Init(void)
   {
     Error_Handler();
   }
-  /* USER CODE BEGIN USART1_Init 2 */
-
-  /* USER CODE END USART1_Init 2 */
 
 }
 
-/**
-  * @brief GPIO Initialization Function
-  * @param None
-  * @retval None
-  */
+
+#define CH7_INDICATOR_PIN 3
+
+
 static void MX_GPIO_Init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
@@ -196,8 +97,23 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
-  /*Configure GPIO pin Output Level */
+  /*Configure GPIO output pins default levels */
   HAL_GPIO_WritePin(ERROR_GPIO_GPIO_Port, ERROR_GPIO_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(CH0_INDICATOR_PORT, CH0_INDICATOR_PIN, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(CH1_INDICATOR_PORT, CH1_INDICATOR_PIN, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(CH2_INDICATOR_PORT, CH2_INDICATOR_PIN, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(CH3_INDICATOR_PORT, CH3_INDICATOR_PIN, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(CH4_INDICATOR_PORT, CH4_INDICATOR_PIN, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(CH5_INDICATOR_PORT, CH5_INDICATOR_PIN, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(CH6_INDICATOR_PORT, CH6_INDICATOR_PIN, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(CH7_INDICATOR_PORT, CH7_INDICATOR_PIN, GPIO_PIN_RESET);
+
+  HAL_GPIO_WritePin(TARGET_SELECT_0_MUX_DRIVER_PORT, TARGET_SELECT_0_MUX_DRIVER_PIN, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(TARGET_SELECT_1_MUX_DRIVER_PORT, TARGET_SELECT_1_MUX_DRIVER_PIN, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(TARGET_SELECT_2_MUX_DRIVER_PORT, TARGET_SELECT_2_MUX_DRIVER_PIN, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(J_NRES_DISABLE_PORT, J_NRES_DISABLE_PIN, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(HERD_RES_ALL_PORT, HERD_RES_ALL_PIN, GPIO_PIN_RESET);
+
 
   /*Configure GPIO pin : ERROR_GPIO_Pin */
   GPIO_InitStruct.Pin = ERROR_GPIO_Pin;
@@ -206,16 +122,111 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(ERROR_GPIO_GPIO_Port, &GPIO_InitStruct);
 
+
+  /*Configure GPIO pin : CH0_INDICATOR_PIN */
+  GPIO_InitStruct.Pin = CH0_INDICATOR_PIN;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(CH0_INDICATOR_PORT, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : CH1_INDICATOR_PIN */
+  GPIO_InitStruct.Pin = CH1_INDICATOR_PIN;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(CH1_INDICATOR_PORT, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : CH2_INDICATOR_PIN */
+  GPIO_InitStruct.Pin = CH2_INDICATOR_PIN;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(CH2_INDICATOR_PORT, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : CH3_INDICATOR_PIN */
+  GPIO_InitStruct.Pin = CH3_INDICATOR_PIN;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(CH3_INDICATOR_PORT, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : CH4_INDICATOR_PIN */
+  GPIO_InitStruct.Pin = CH4_INDICATOR_PIN;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(CH4_INDICATOR_PORT, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : CH5_INDICATOR_PIN */
+  GPIO_InitStruct.Pin = CH5_INDICATOR_PIN;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(CH5_INDICATOR_PORT, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : CH6_INDICATOR_PIN */
+  GPIO_InitStruct.Pin = CH6_INDICATOR_PIN;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(CH6_INDICATOR_PORT, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : CH7_INDICATOR_PIN */
+  GPIO_InitStruct.Pin = CH7_INDICATOR_PIN;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(CH7_INDICATOR_PORT, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : TARGET_SELECT_0_MUX_DRIVER_PIN */
+  GPIO_InitStruct.Pin = TARGET_SELECT_0_MUX_DRIVER_PIN;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(TARGET_SELECT_0_MUX_DRIVER_PORT, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : TARGET_SELECT_1_MUX_DRIVER_PIN */
+  GPIO_InitStruct.Pin = TARGET_SELECT_1_MUX_DRIVER_PIN;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(TARGET_SELECT_1_MUX_DRIVER_PORT, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : TARGET_SELECT_2_MUX_DRIVER_PIN */
+  GPIO_InitStruct.Pin = TARGET_SELECT_2_MUX_DRIVER_PIN;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(TARGET_SELECT_2_MUX_DRIVER_PORT, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : USB_POWER_INDICATOR_PIN */
+  GPIO_InitStruct.Pin = USB_POWER_INDICATOR_PIN;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
+  GPIO_InitStruct.Pull = GPIO_PULLUP; //TODO - usunąć w wersji na gotową płytkę
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(USB_POWER_INDICATOR_PORT, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : TARGET_SELECT_MAN_SW_PIN */
+  GPIO_InitStruct.Pin = TARGET_SELECT_MAN_SW_PIN;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(TARGET_SELECT_MAN_SW_PORT, &GPIO_InitStruct);
+  /*Configure GPIO pin : TARGET_RESET_MAN_SW_PIN */
+  GPIO_InitStruct.Pin = TARGET_RESET_MAN_SW_PIN;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(TARGET_RESET_MAN_SW_PORT, &GPIO_InitStruct);
+
+  // manage interrupt handlers here
+
 }
 
-/* USER CODE BEGIN 4 */
 
-/* USER CODE END 4 */
 
-/**
-  * @brief  This function is executed in case of error occurrence.
-  * @retval None
-  */
+
 void Error_Handler(void)
 {
   HAL_GPIO_WritePin(ERROR_GPIO_GPIO_Port, ERROR_GPIO_Pin, GPIO_PIN_RESET);
