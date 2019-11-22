@@ -31,6 +31,7 @@
 #include "stm32f1xx.h"
 #include "stm32f1xx_hal.h"
 #include "usbd_def.h"
+#include <stdbool.h>
 
 /* USER CODE BEGIN INCLUDE */
 
@@ -76,7 +77,7 @@
   */
 
 /** USB Device initialization function. */
-void MX_USB_DEVICE_Init(void);
+bool USB_DEVICE_Init(void);
 
 /*
  * -- Insert functions declaration here --
