@@ -30,6 +30,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "usbd_cdc.h"
 
+#include <stdbool.h>
+
 /* USER CODE BEGIN INCLUDE */
 
 /* USER CODE END INCLUDE */
@@ -103,11 +105,14 @@ extern USBD_CDC_ItfTypeDef USBD_Interface_fops_FS;
   * @{
   */
 
-uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len);
+uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len); // to do wywalenia w przyszlosci TODO
 
-/* USER CODE BEGIN EXPORTED_FUNCTIONS */
+size_t USB_VCOM_GetChar(char* c);
+size_t USB_VCOM_PutChar(char c);
+size_t USB_VCOM_WriteData(const void* data, size_t size);
+size_t USB_VCOM_WriteString(const char* str);
+size_t USB_VCOM_ReadData(void* data, size_t size);
 
-/* USER CODE END EXPORTED_FUNCTIONS */
 
 /**
   * @}
