@@ -18,7 +18,7 @@ int main(void) {
 
     char c;
     while (1) {
-
+        USB_Proc(); // potrzebne do optymalizacji wysyłu danych przez USB (zbieranie danych w większe pakiety - coś na wzór algorytmu Nagle'a)
         if(USART_GetChar(&c)){
             USART_PutChar(c);
         }

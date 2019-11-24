@@ -260,11 +260,54 @@ uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len)
   return result;
 }
 
-size_t USB_VCOM_GetChar(char* c);
-size_t USB_VCOM_PutChar(char c);
-size_t USB_VCOM_WriteData(const void* data, size_t size);
-size_t USB_VCOM_WriteString(const char* str);
-size_t USB_VCOM_ReadData(void* data, size_t size);
+static bool USB_readyToTransmit = false;
+
+bool USB_VCOM_GetChar(char* c){
+    return RingBuffer_GetChar(&USB_VCOM_RingBuffer_Rx, c);
+}
+bool USB_VCOM_PutChar(char c){
+    bool ret = RingBuffer_PutChar(&USB_VCOM_RingBuffer_Tx, c);
+    USB_readyToTransmit = true;
+    return ret;
+}
+size_t USB_VCOM_WriteData(const void* data, size_t size){
+    size_t dataTransmittedSize = 0;
+    for(int i = 0; i < (int)size; i++){
+        if(RingBuffer_PutChar(&USB_VCOM_RingBuffer_Tx, *((uint8_t*)data + i))){
+            dataTransmittedSize++;
+        }
+    }
+    USB_readyToTransmit = true;
+    return dataTransmittedSize;
+
+}
+size_t USB_VCOM_WriteString(const char* str){
+
+    return USB_VCOM_WriteData(str, strlen(str));
+
+}
+size_t USB_VCOM_ReadData(void* data, size_t size){
+    for(int i = 0; i < (int)size; i++) {
+        return RingBuffer_GetChar(&USB_VCOM_RingBuffer_Rx, (char*)((uint8_t *)data + i));
+    }
+
+}
+
+// umieścić w mainie //TODO
+void USB_Proc(){
+    uint8_t buf[2048];
+    // jesli urzadzenie dostało plecenie transmisji
+    if(USB_readyToTransmit){
+        //jeśli usb nie ma co robić
+        size_t len = RingBuffer_GetLen(&USB_VCOM_RingBuffer_Tx);
+        if(len > 0){
+            for(int i = 0; i < (int)len; i++) {
+            RingBuffer_GetChar(&USB_VCOM_RingBuffer_Tx, (char*)((uint8_t *)buf + i));
+        }
+    }
+        CDC_Transmit_FS(buf, len);
+    }
+}
 
 /**
   * @}
