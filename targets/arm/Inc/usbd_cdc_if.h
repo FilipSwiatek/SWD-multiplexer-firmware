@@ -112,6 +112,7 @@ bool USB_VCOM_PutChar(char c);
 size_t USB_VCOM_WriteData(const void* data, size_t size);
 size_t USB_VCOM_WriteString(const char* str);
 size_t USB_VCOM_ReadData(void* data, size_t size);
+void USB_VCOM_Clear_RxBuffer(void);
 
 void USB_Proc();
 

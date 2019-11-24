@@ -85,6 +85,7 @@ bool USB_DEVICE_Init(void)
   {
     return false;
   }
+  USB_VCOM_Clear_RxBuffer();
   return true;
 
 }

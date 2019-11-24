@@ -16,13 +16,28 @@ int main(void) {
     if(USART1_UART_Init() == false) Error_Handler();
     if(USB_DEVICE_Init() == false) Error_Handler();
 
+    uint32_t previousTick = HAL_GetTick();
+
+    while(HAL_GetTick() > previousTick + 1000);
+
+    previousTick = HAL_GetTick();
     char c;
     while (1) {
-        USB_Proc(); // potrzebne do optymalizacji wysyłu danych przez USB (zbieranie danych w większe pakiety - coś na wzór algorytmu Nagle'a)
+
         if(USART_GetChar(&c)){
             USART_PutChar(c);
         }
+        USB_Proc(); // potrzebne do optymalizacji wysyłu danych przez USB (zbieranie danych w większe pakiety - coś na wzór algorytmu Nagle'a)
 
+        if(HAL_GetTick() > previousTick + 1000){
+            previousTick = HAL_GetTick();
+            USB_VCOM_PutChar('c');
+        }
+
+if(USB_VCOM_GetChar(&c)){
+    USB_VCOM_PutChar(c);
+    HAL_GPIO_TogglePin(ERROR_GPIO_GPIO_Port, ERROR_GPIO_Pin);
+}
     }
 }
 

@@ -83,6 +83,7 @@ static int8_t CDC_Init_FS(void);
 static int8_t CDC_DeInit_FS(void);
 static int8_t CDC_Control_FS(uint8_t cmd, uint8_t* pbuf, uint16_t length);
 static int8_t CDC_Receive_FS(uint8_t* pbuf, uint32_t *Len);
+static bool USB_readyToTransmit = false;
 
 /* USER CODE BEGIN PRIVATE_FUNCTIONS_DECLARATION */
 
@@ -257,17 +258,18 @@ uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len)
   USBD_CDC_SetTxBuffer(&hUsbDeviceFS, Buf, Len);
   result = USBD_CDC_TransmitPacket(&hUsbDeviceFS);
   /* USER CODE END 7 */
+  USB_readyToTransmit = false;
   return result;
 }
 
-static bool USB_readyToTransmit = false;
+
 
 bool USB_VCOM_GetChar(char* c){
     return RingBuffer_GetChar(&USB_VCOM_RingBuffer_Rx, c);
 }
 bool USB_VCOM_PutChar(char c){
     bool ret = RingBuffer_PutChar(&USB_VCOM_RingBuffer_Tx, c);
-    USB_readyToTransmit = true;
+    if(ret) USB_readyToTransmit = true;
     return ret;
 }
 size_t USB_VCOM_WriteData(const void* data, size_t size){
@@ -277,7 +279,7 @@ size_t USB_VCOM_WriteData(const void* data, size_t size){
             dataTransmittedSize++;
         }
     }
-    USB_readyToTransmit = true;
+    if(dataTransmittedSize > 0)USB_readyToTransmit = true;
     return dataTransmittedSize;
 
 }
@@ -293,21 +295,29 @@ size_t USB_VCOM_ReadData(void* data, size_t size){
 
 }
 
-// umieścić w mainie //TODO
+void USB_VCOM_Clear_RxBuffer(void){
+    RingBuffer_Clear(&USB_VCOM_RingBuffer_Rx);
+}
+
+
+
 void USB_Proc(){
     uint8_t buf[2048];
     // jesli urzadzenie dostało plecenie transmisji
     if(USB_readyToTransmit){
         //jeśli usb nie ma co robić
         size_t len = RingBuffer_GetLen(&USB_VCOM_RingBuffer_Tx);
+        if(len > APP_TX_DATA_SIZE) len = APP_TX_DATA_SIZE;
         if(len > 0){
             for(int i = 0; i < (int)len; i++) {
-            RingBuffer_GetChar(&USB_VCOM_RingBuffer_Tx, (char*)((uint8_t *)buf + i));
+                RingBuffer_GetChar(&USB_VCOM_RingBuffer_Tx, (char*)((uint8_t *)buf + i));
+            }
         }
-    }
         CDC_Transmit_FS(buf, len);
     }
 }
+
+
 
 /**
   * @}
