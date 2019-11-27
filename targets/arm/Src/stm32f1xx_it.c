@@ -59,6 +59,8 @@
 extern PCD_HandleTypeDef hpcd_USB_FS;
 /* USER CODE BEGIN EV */
 
+
+
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -205,5 +207,13 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
   HAL_PCD_IRQHandler(&hpcd_USB_FS);
 
 }
+
+
+void EXTI9_5_IRQHandler(void){
+    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_5);
+    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_6);
+    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_8);
+}
+
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

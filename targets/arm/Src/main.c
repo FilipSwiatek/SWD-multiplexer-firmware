@@ -15,6 +15,7 @@ void targetTest(void);
 
 
 int main(void) {
+    HAL_Init();
     GPIO_Init();
     if(SystemClock_Config() == false) Error_Handler();
     if(USART1_UART_Init() == false) Error_Handler();
@@ -34,6 +35,7 @@ int main(void) {
 
 void Error_Handler(void){
     HAL_GPIO_WritePin(ERROR_GPIO_GPIO_Port, ERROR_GPIO_Pin, GPIO_PIN_RESET);
+    while(1);
 }
 
 static void ErrorDiodeBlinkingProc(){

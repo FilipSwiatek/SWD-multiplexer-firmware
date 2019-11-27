@@ -33,6 +33,7 @@ void GPIO_Init(void)
     HAL_GPIO_WritePin(J_NRES_DISABLE_PORT, J_NRES_DISABLE_PIN, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(HERD_RES_ALL_PORT, HERD_RES_ALL_PIN, GPIO_PIN_RESET);
 
+    //TODO usunąć tę sekcję w wersji na gotową płytkę
     /*Configure GPIO pin : ERROR_GPIO_Pin */
     GPIO_InitStruct.Pin = ERROR_GPIO_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -120,24 +121,49 @@ void GPIO_Init(void)
 
     /*Configure GPIO pin : USB_POWER_INDICATOR_PIN */
     GPIO_InitStruct.Pin = USB_POWER_INDICATOR_PIN;
-    GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
+    GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;//
     GPIO_InitStruct.Pull = GPIO_PULLUP; //TODO - usunąć w wersji na gotową płytkę
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(USB_POWER_INDICATOR_PORT, &GPIO_InitStruct);
 
     /*Configure GPIO pin : TARGET_SELECT_MAN_SW_PIN */
     GPIO_InitStruct.Pin = TARGET_SELECT_MAN_SW_PIN;
-    GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
+    GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;//
     GPIO_InitStruct.Pull = GPIO_PULLUP;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(TARGET_SELECT_MAN_SW_PORT, &GPIO_InitStruct);
+
     /*Configure GPIO pin : TARGET_RESET_MAN_SW_PIN */
     GPIO_InitStruct.Pin = TARGET_RESET_MAN_SW_PIN;
-    GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
+    GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;//
     GPIO_InitStruct.Pull = GPIO_PULLUP;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(TARGET_RESET_MAN_SW_PORT, &GPIO_InitStruct);
 
-    // manage interrupt handlers here
+    /*Configure GPIO pin : USB_PULLUP_PIN */
+    GPIO_InitStruct.Pin = USB_PULLUP_PIN;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(USB_PULLUP_PORT, &GPIO_InitStruct);
 
+    HAL_NVIC_SetPriority(EXTI9_5_IRQn,15, 15 );
+    HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
+
+}
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
+    switch(GPIO_Pin){
+        case TARGET_SELECT_MAN_SW_PIN:
+            //TODO
+            break;
+        case TARGET_RESET_MAN_SW_PIN:
+            //TODO
+            break;
+        case USB_POWER_INDICATOR_PIN:
+            //TODO
+            break;
+        default:
+            break;
+    }
 }
