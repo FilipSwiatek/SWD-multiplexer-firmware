@@ -4,7 +4,8 @@
 #include "gpio.h"
 #include "uart.h"
 #include "clock.h"
-#include <stdbool.h>
+#include "cli.h"
+
 
 // handler błędu (nie mylić z hardfaultem)
 void Error_Handler(void);
@@ -25,6 +26,7 @@ int main(void) {
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
     while (1) {
         USB_Proc(); // potrzebne do optymalizacji wysyłu danych przez USB (zbieranie danych w większe pakiety - coś na wzór algorytmu Nagle'a)
+        CLI_Proc(); // porces CLI
         ErrorDiodeBlinkingProc(); // kontrola działąnia backgroundu
         targetTest();
     }
@@ -35,7 +37,10 @@ int main(void) {
 
 void Error_Handler(void){
     HAL_GPIO_WritePin(ERROR_GPIO_GPIO_Port, ERROR_GPIO_Pin, GPIO_PIN_RESET);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmissing-noreturn"
     while(1);
+#pragma clang diagnostic pop
 }
 
 static void ErrorDiodeBlinkingProc(){
@@ -104,6 +109,8 @@ static bool switchTarget(uint8_t targetNo){
         case 7:
             HAL_GPIO_WritePin(CH7_INDICATOR_PORT, CH7_INDICATOR_PIN, GPIO_PIN_SET);
             break;
+        default:
+            break;
     }
 
        return true;
@@ -122,6 +129,38 @@ void targetTest(void){
     }
 }
 
+void onResetAllCommand(const char* arg){
+
+
+};
+
+void onChangeTargetCommand(const char* arg){
+
+
+}
+
+void onHelpCommand(const char* arg){
+    (void)arg;
+}
+
+
+CLI_CommandItem resetAll = {
+        .commandName = "reset_all",
+        .callback = onResetAllCommand,
+        .description = "This command reset targets in ways specified by argument:\n\r" //TODO
+};
+
+CLI_CommandItem changeTarget = {
+        .commandName = "change_target",
+        .callback = onChangeTargetCommand,
+        .description = "This command " //TODO
+};
+
+CLI_CommandItem help = {
+        .commandName = "help",
+        .callback = onHelpCommand,
+        .description = "This command " //TODO
+};
 
 
 
