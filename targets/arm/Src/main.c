@@ -6,6 +6,8 @@
 #include "clock.h"
 #include "cli.h"
 
+uint8_t currentTarget = 0;
+
 
 // handler błędu (nie mylić z hardfaultem)
 void Error_Handler(void);
@@ -13,7 +15,37 @@ void Error_Handler(void);
 static void ErrorDiodeBlinkingProc();
 static bool switchTarget(uint8_t targetNo);
 void targetTest(void);
+void delay_ms(uint32_t ms);
+// paraller reset control
+static void allTargetsResetPush(void);
+static void allTargetsResetRelease(void);
+static void allTargetsResetPushAndRelease(void);
 
+void onResetAllCommand(const char* arg);
+void onSelectTargetCommand(const char* arg);
+void onHelpCommand(const char* arg);
+
+CLI_CommandItem resetAllCommand = {
+        .commandName = "reset_all",
+        .callback = onResetAllCommand,
+        .description = "This command reset targets in ways specified by argument:\n\r "
+                       "set - sets reset - as released button\n\r "
+                       "clear - as pushed reset button.\n\r"
+                       "If you leave argument pole empty, there will be a 20ms pulse set-clear-set.\n\r"
+                       "Syntax: reset_all [set/clear/]\n\r"
+};
+
+CLI_CommandItem selectTargetCommand = {
+        .commandName = "select",
+        .callback = onSelectTargetCommand,
+        .description = "This command  selects target.\n\r Syntax is: select [target No]\n\r"
+};
+
+CLI_CommandItem helpCommand = {
+        .commandName = "help",
+        .callback = onHelpCommand,
+        .description = "This command shows help\n\r"
+};
 
 int main(void) {
     HAL_Init();
@@ -21,6 +53,9 @@ int main(void) {
     if(SystemClock_Config() == false) Error_Handler();
     if(USART1_UART_Init() == false) Error_Handler();
     if(USB_DEVICE_Init() == false) Error_Handler();
+    CLI_AddCommand(&resetAllCommand);
+    CLI_AddCommand(&selectTargetCommand);
+    CLI_AddCommand(&helpCommand);
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
@@ -28,7 +63,7 @@ int main(void) {
         USB_Proc(); // potrzebne do optymalizacji wysyłu danych przez USB (zbieranie danych w większe pakiety - coś na wzór algorytmu Nagle'a)
         CLI_Proc(); // porces CLI
         ErrorDiodeBlinkingProc(); // kontrola działąnia backgroundu
-        targetTest();
+        //targetTest();
     }
 #pragma clang diagnostic pop
 
@@ -113,6 +148,8 @@ static bool switchTarget(uint8_t targetNo){
             break;
     }
 
+    currentTarget = targetNo;
+
        return true;
 }
 
@@ -130,71 +167,81 @@ void targetTest(void){
 }
 
 void onResetAllCommand(const char* arg){
+    if(!strcmp(arg, "set")){
+        printStrToOutputs("OK\n\r");
+        allTargetsResetRelease();
+    }else if(!strcmp(arg, "clear")){
+        printStrToOutputs("OK\n\r");
+        allTargetsResetPush();
+    }else if(!strcmp(arg, "")){
+        printStrToOutputs("OK\n\r");
+        allTargetsResetPushAndRelease();
+    }else{
+        printStrToOutputs("ERR\n\r");
+    }
 
 
 };
 
-void onChangeTargetCommand(const char* arg){
-
-
+void onSelectTargetCommand(const char* arg){
+    uint32_t targetNo = atoi(arg);
+    if(targetNo < 8 ){
+        switchTarget(targetNo);
+        printStrToOutputs("OK\n\r");
+    }else{
+        printStrToOutputs("ERR\n\r");
+    }
 }
 
 void onHelpCommand(const char* arg){
     (void)arg;
+    CLI_PrintAllCommands();
 }
 
+void delay_ms(uint32_t ms){
+        uint32_t previousTick = HAL_GetTick();
+        while(previousTick + ms > HAL_GetTick());
+}
 
-CLI_CommandItem resetAll = {
-        .commandName = "reset_all",
-        .callback = onResetAllCommand,
-        .description = "This command reset targets in ways specified by argument:\n\r" //TODO
-};
+static void allTargetsResetPush(void){
+    HAL_GPIO_WritePin(J_NRES_DISABLE_PORT, J_NRES_DISABLE_PIN,GPIO_PIN_SET);
+    delay_ms(5); // 5 ms delay
+    HAL_GPIO_WritePin(HERD_RES_ALL_PORT, HERD_RES_ALL_PIN, GPIO_PIN_SET);
+}
+static void allTargetsResetRelease(void){
+    HAL_GPIO_WritePin(HERD_RES_ALL_PORT, HERD_RES_ALL_PIN, GPIO_PIN_RESET);
+    delay_ms(5);
+    HAL_GPIO_WritePin(J_NRES_DISABLE_PORT, J_NRES_DISABLE_PIN,GPIO_PIN_RESET);
 
-CLI_CommandItem changeTarget = {
-        .commandName = "change_target",
-        .callback = onChangeTargetCommand,
-        .description = "This command " //TODO
-};
+}
 
-CLI_CommandItem help = {
-        .commandName = "help",
-        .callback = onHelpCommand,
-        .description = "This command " //TODO
-};
+static void allTargetsResetPushAndRelease(void){
+    allTargetsResetPush();
+    delay_ms(20);
+    allTargetsResetRelease();
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
+    switch(GPIO_Pin){
+        case TARGET_SELECT_MAN_SW_PIN:
+            switchTarget((currentTarget+1)%8);
+            break;
+        case TARGET_RESET_MAN_SW_PIN:
+            allTargetsResetPushAndRelease();
+            break;
+        case USB_POWER_INDICATOR_PIN:
+            if (GPIO_PIN_RESET == HAL_GPIO_ReadPin(USB_POWER_INDICATOR_PORT, USB_POWER_INDICATOR_PIN)){
+                // turn off DP pullup
+                HAL_GPIO_WritePin(USB_PULLUP_PORT, USB_PULLUP_PIN, GPIO_PIN_RESET);
+            }else{
+                // turn on DP pullup
+                HAL_GPIO_WritePin(USB_PULLUP_PORT, USB_PULLUP_PIN, GPIO_PIN_SET);
+            }
+            break;
+        default:
+            break;
+    }
+}
 
 
 

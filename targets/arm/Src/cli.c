@@ -30,6 +30,7 @@ void CLI_Proc(void){
 			if(ptr != NULL){
 			ptr->callback(commandBuffer+strlen(commandBuffer)+1); // argument is string shifted by strlen (because space was converted to '\0' <3
 			}else{
+                printStrToOutputs("Not recognized command. Try \"help\"\n\r");
 			}
 			printf("String commandbuffera to: %s\n\r",commandBuffer);
 			//czyscimy bufor (nadpisujemy nullami)
@@ -61,12 +62,14 @@ bool CLI_AddCommand(CLI_CommandItem* item){
 
 void CLI_PrintAllCommands(void){
 	CLI_CommandItem* nextPtr = head;
-	USART_WriteString("List of Available commands and their descriptions:\n\r");
+    printStrToOutputs("List of Available commands and their descriptions:\n\r");
+
 	while(nextPtr != NULL){
-		USART_WriteString(nextPtr->commandName);
-		USART_WriteString("\n\r");
-		USART_WriteString(nextPtr->description);
-		USART_WriteString("\n\r");
+        printStrToOutputs(nextPtr->commandName);
+        printStrToOutputs("\n\r");
+        printStrToOutputs(nextPtr->description);
+        printStrToOutputs("\n\r");
+
 		nextPtr = nextPtr->next;
 	}
 }
@@ -133,4 +136,9 @@ bool CLI_StoreCommand(){
 		}
 	}
 	return false;
+}
+
+void printStrToOutputs(const char* str){
+    USB_VCOM_WriteString(str);
+    USART_WriteString(str);
 }

@@ -32,4 +32,7 @@ bool CLI_AddCommand(CLI_CommandItem *item);
 
 void CLI_PrintAllCommands(void);
 
+
+void printStrToOutputs(const char* str);
+
 #endif // CLI_H_

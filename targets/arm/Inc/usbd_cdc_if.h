@@ -105,7 +105,7 @@ extern USBD_CDC_ItfTypeDef USBD_Interface_fops_FS;
   * @{
   */
 
-uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len); // to do wywalenia w przyszlosci TODO
+uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len);
 
 bool USB_VCOM_GetChar(char* c);
 bool USB_VCOM_PutChar(char c);

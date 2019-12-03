@@ -152,18 +152,3 @@ void GPIO_Init(void)
 
 }
 
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
-    switch(GPIO_Pin){
-        case TARGET_SELECT_MAN_SW_PIN:
-            //TODO
-            break;
-        case TARGET_RESET_MAN_SW_PIN:
-            //TODO
-            break;
-        case USB_POWER_INDICATOR_PIN:
-            //TODO
-            break;
-        default:
-            break;
-    }
-}
