@@ -147,6 +147,20 @@ void GPIO_Init(void)
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     HAL_GPIO_Init(USB_PULLUP_PORT, &GPIO_InitStruct);
 
+    /*Configure GPIO pin : J_NRES_DISABLE_PIN */
+    GPIO_InitStruct.Pin = J_NRES_DISABLE_PIN;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(J_NRES_DISABLE_PORT, &GPIO_InitStruct);
+
+    /*Configure GPIO pin : HERD_RES_ALL_PIN */
+    GPIO_InitStruct.Pin = HERD_RES_ALL_PIN;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(HERD_RES_ALL_PORT, &GPIO_InitStruct);
+
     HAL_NVIC_SetPriority(EXTI9_5_IRQn,15, 15 );
     HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 

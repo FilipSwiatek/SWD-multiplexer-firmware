@@ -224,7 +224,8 @@ static void allTargetsResetPushAndRelease(void){
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
     switch(GPIO_Pin){
         case TARGET_SELECT_MAN_SW_PIN:
-            switchTarget((currentTarget+1)%8);
+            currentTarget = (currentTarget+1)%8;
+            switchTarget(currentTarget);
             break;
         case TARGET_RESET_MAN_SW_PIN:
             allTargetsResetPushAndRelease();
