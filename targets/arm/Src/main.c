@@ -230,6 +230,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
         case TARGET_RESET_MAN_SW_PIN:
             allTargetsResetPushAndRelease();
             break;
+            /*
         case USB_POWER_INDICATOR_PIN:
             if (GPIO_PIN_RESET == HAL_GPIO_ReadPin(USB_POWER_INDICATOR_PORT, USB_POWER_INDICATOR_PIN)){
                 // turn off DP pullup
@@ -239,6 +240,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
                 HAL_GPIO_WritePin(USB_PULLUP_PORT, USB_PULLUP_PIN, GPIO_PIN_SET);
             }
             break;
+            */
         default:
             break;
     }
