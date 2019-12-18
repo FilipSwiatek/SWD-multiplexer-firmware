@@ -56,13 +56,14 @@ int main(void) {
     CLI_AddCommand(&resetAllCommand);
     CLI_AddCommand(&selectTargetCommand);
     CLI_AddCommand(&helpCommand);
+    switchTarget(0);
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
     while (1) {
         USB_Proc(); // potrzebne do optymalizacji wysyłu danych przez USB (zbieranie danych w większe pakiety - coś na wzór algorytmu Nagle'a)
         CLI_Proc(); // porces CLI
-        ErrorDiodeBlinkingProc(); // kontrola działąnia backgroundu
+        //ErrorDiodeBlinkingProc(); // kontrola działąnia backgroundu
         //targetTest();
     }
 #pragma clang diagnostic pop
