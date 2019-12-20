@@ -29,8 +29,8 @@ CLI_CommandItem resetAllCommand = {
         .commandName = "reset_all",
         .callback = onResetAllCommand,
         .description = "This command reset targets in ways specified by argument:\n\r "
-                       "set - sets reset - as released button\n\r "
-                       "clear - as pushed reset button.\n\r"
+                       "clear - sets reset - as released button\n\r "
+                       "aet - as pushed reset button.\n\r"
                        "If you leave argument pole empty, there will be a 20ms pulse set-clear-set.\n\r"
                        "Syntax: reset_all [set/clear/]\n\r"
 };
@@ -168,10 +168,10 @@ void targetTest(void){
 }
 
 void onResetAllCommand(const char* arg){
-    if(!strcmp(arg, "set")){
+    if( (!strcmp(arg, "clear")) || (!strcmp(arg, "release")) ){
         printStrToOutputs("OK\n\r");
         allTargetsResetRelease();
-    }else if(!strcmp(arg, "clear")){
+    }else if( (!strcmp(arg, "set")) || (!strcmp(arg, "push")) ){
         printStrToOutputs("OK\n\r");
         allTargetsResetPush();
     }else if(!strcmp(arg, "")){
