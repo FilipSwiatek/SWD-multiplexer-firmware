@@ -1,7 +1,7 @@
 #ifndef CLI_H_
 #define CLI_H_
 
-#define FORWARD_INPUT_TO_OUTPUT 1
+#define FORWARD_INPUT_TO_OUTPUT 0
 
 #include <stdbool.h>
 #include <stdint.h>
