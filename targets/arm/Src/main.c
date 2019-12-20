@@ -6,8 +6,13 @@
 #include "clock.h"
 #include "cli.h"
 
+
+#define RESET_ALL_PULSE_DURATION_MS 20
+
 uint8_t currentTarget = 0;
 
+static bool isResetAllPulseGoingOn = false;
+static uint32_t reset_all_pulse_timestamp = 0;
 
 // handler błędu (nie mylić z hardfaultem)
 void Error_Handler(void);
@@ -24,6 +29,9 @@ static void allTargetsResetPushAndRelease(void);
 void onResetAllCommand(const char* arg);
 void onSelectTargetCommand(const char* arg);
 void onHelpCommand(const char* arg);
+
+// proces pulsu resetowania wszystkich urządzeń
+void allTargetResetPulseProc(void);
 
 CLI_CommandItem resetAllCommand = {
         .commandName = "reset_all",
@@ -63,6 +71,7 @@ int main(void) {
     while (1) {
         USB_Proc(); // potrzebne do optymalizacji wysyłu danych przez USB (zbieranie danych w większe pakiety - coś na wzór algorytmu Nagle'a)
         CLI_Proc(); // porces CLI
+        allTargetResetPulseProc();
         //ErrorDiodeBlinkingProc(); // kontrola działąnia backgroundu
         //targetTest();
     }
@@ -216,10 +225,19 @@ static void allTargetsResetRelease(void){
 
 }
 
+
+
 static void allTargetsResetPushAndRelease(void){
     allTargetsResetPush();
-    delay_ms(20);
-    allTargetsResetRelease();
+    reset_all_pulse_timestamp = HAL_GetTick();
+    isResetAllPulseGoingOn = true;
+
+}
+void allTargetResetPulseProc(void){
+    if(reset_all_pulse_timestamp + RESET_ALL_PULSE_DURATION_MS < HAL_GetTick() && isResetAllPulseGoingOn == true){
+        allTargetsResetRelease();
+        isResetAllPulseGoingOn = false;
+    }
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
