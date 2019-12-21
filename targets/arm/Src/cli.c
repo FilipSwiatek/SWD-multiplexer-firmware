@@ -30,9 +30,9 @@ void CLI_Proc(void){
 			if(ptr != NULL){
 			ptr->callback(commandBuffer+strlen(commandBuffer)+1); // argument is string shifted by strlen (because space was converted to '\0' <3
 			}else{
-                printStrToOutputs("Not recognized command. Try \"help\"\n\r");
+                printStrToOutputs("Not recognized command. Try \"help\"\n");
 			}
-			printf("String commandbuffera to: %s\n\r",commandBuffer);
+			printf("String commandbuffera to: %s\n",commandBuffer);
 			//czyscimy bufor (nadpisujemy nullami)
 			memset(commandBuffer, '\0', sizeof(commandBuffer));
 		}
@@ -62,13 +62,13 @@ bool CLI_AddCommand(CLI_CommandItem* item){
 
 void CLI_PrintAllCommands(void){
 	CLI_CommandItem* nextPtr = head;
-    printStrToOutputs("List of Available commands and their descriptions:\n\r");
+    printStrToOutputs("List of Available commands and their descriptions:\n");
 
 	while(nextPtr != NULL){
         printStrToOutputs(nextPtr->commandName);
-        printStrToOutputs("\n\r");
+        printStrToOutputs("\n");
         printStrToOutputs(nextPtr->description);
-        printStrToOutputs("\n\r");
+        printStrToOutputs("\n");
 
 		nextPtr = nextPtr->next;
 	}
@@ -98,7 +98,7 @@ bool CLI_StoreCommand(){
 #if defined(FORWARD_INPUT_TO_OUTPUT) && FORWARD_INPUT_TO_OUTPUT == 1
 		USART_PutChar(c);
         USB_VCOM_PutChar(c);
-		if(c == '\r'){ // to make new line
+		if(c == '\n'){ // to make new line
 			USART_PutChar('\n');
             USB_VCOM_PutChar('\n');
 		}
@@ -119,6 +119,7 @@ bool CLI_StoreCommand(){
 				break;
 			
 			case '\r':
+			    break;
 			case '\n':
 				commandBuffer[index] = '\0';
 				index = 0;

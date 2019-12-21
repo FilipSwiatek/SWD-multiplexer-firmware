@@ -36,23 +36,23 @@ void allTargetResetPulseProc(void);
 CLI_CommandItem resetAllCommand = {
         .commandName = "reset_all",
         .callback = onResetAllCommand,
-        .description = "This command reset targets in ways specified by argument:\n\r "
-                       "clear - sets reset - as released button\n\r "
-                       "aet - as pushed reset button.\n\r"
-                       "If you leave argument pole empty, there will be a 20ms pulse set-clear-set.\n\r"
-                       "Syntax: reset_all [set/clear/]\n\r"
+        .description = "This command reset targets in ways specified by argument:\n "
+                       "clear - sets reset - as released button\n "
+                       "aet - as pushed reset button.\n"
+                       "If you leave argument pole empty, there will be a 20ms pulse set-clear-set.\n"
+                       "Syntax: reset_all [set/clear/]\n"
 };
 
 CLI_CommandItem selectTargetCommand = {
         .commandName = "select",
         .callback = onSelectTargetCommand,
-        .description = "This command  selects target.\n\r Syntax is: select [target No]\n\r"
+        .description = "This command  selects target.\n Syntax is: select [target No]\n"
 };
 
 CLI_CommandItem helpCommand = {
         .commandName = "help",
         .callback = onHelpCommand,
-        .description = "This command shows help\n\r"
+        .description = "This command shows help\n"
 };
 
 int main(void) {
@@ -178,16 +178,16 @@ void targetTest(void){
 
 void onResetAllCommand(const char* arg){
     if( (!strcmp(arg, "clear")) || (!strcmp(arg, "release")) ){
-        printStrToOutputs("OK\n\r");
+        printStrToOutputs("OK\n");
         allTargetsResetRelease();
     }else if( (!strcmp(arg, "set")) || (!strcmp(arg, "push")) ){
-        printStrToOutputs("OK\n\r");
+        printStrToOutputs("OK\n");
         allTargetsResetPush();
     }else if(!strcmp(arg, "")){
-        printStrToOutputs("OK\n\r");
+        printStrToOutputs("OK\n");
         allTargetsResetPushAndRelease();
     }else{
-        printStrToOutputs("ERR\n\r");
+        printStrToOutputs("ERR\n");
     }
 
 
@@ -197,9 +197,9 @@ void onSelectTargetCommand(const char* arg){
     uint32_t targetNo = atoi(arg);
     if(targetNo < 8 ){
         switchTarget(targetNo);
-        printStrToOutputs("OK\n\r");
+        printStrToOutputs("OK\n");
     }else{
-        printStrToOutputs("ERR\n\r");
+        printStrToOutputs("ERR\n");
     }
 }
 
