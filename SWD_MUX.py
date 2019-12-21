@@ -16,7 +16,7 @@ def jlink_download(targetname, hexname, erase=True, speed=4000):
     os.system('jlink -device '
               + targetname +
               ' -if SWD -speed ' + str(speed) +
-              ' -autoconnect 1 -CommanderScript script.jlink >> jlink.log')
+              ' -autoconnect 1 -CommanderScript script.jlink > jlink.log')
     # remove J-Link script file
     os.remove("script.jlink")
     #searching for special strings in J-link log to recognize failure
@@ -26,7 +26,7 @@ def jlink_download(targetname, hexname, erase=True, speed=4000):
         ret = 1
 
     jlink_log.close()
-    #os.remove('jlink.log')
+    os.remove('jlink.log')
     return ret
 
 
