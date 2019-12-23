@@ -30,6 +30,30 @@ def jlink_download(targetname, hexname, erase=True, speed=4000):
     return ret
 
 
+def reset_one(state='pulse'):
+    jlink_script = open('script.jlink', 'w')  # open J-Link script file
+    if state == 'set' or state == 'push' or state == 'pulse':
+        jlink_script.write('r0\n')  # turn on 'reset' signal
+    else:
+        jlink_script.write('r1\n')  # turn off 'reset' signal
+    jlink_script.write('q\n')  # quit J-Link script
+    # close J-Link script file
+    jlink_script.close()
+    # execute J-Link reset set/reset depending on 'state' argument
+    os.system('jlink -CommanderScript script.jlink > jlink.log')
+    if state == 'pulse':
+        jlink_script = open('script.jlink', 'w')  # open J-Link script file
+        jlink_script.write('r1\n')  # turn off 'reset' signal
+        jlink_script.write('q\n')  # quit J-Link script
+        # close J-Link script file
+        jlink_script.close()
+        # execute J-Link erase&flash command based on J-Link script file
+        os.system('jlink -CommanderScript script.jlink > jlink.log')
+
+    # remove J-Link script file
+    os.remove("script.jlink")
+    os.remove('jlink.log')
+
 
 class Multiplexer:
     def __init__(self, com_port='COM1'):
