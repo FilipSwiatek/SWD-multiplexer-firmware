@@ -3,6 +3,12 @@ import serial
 import time
 
 
+class Target:
+    def __init__(self, hex_file, device_name):
+        self.hex_file = hex_file
+        self.device_name = device_name
+
+
 def jlink_download(targetname, hexname, erase=True, speed=4000):
 
     jlink_script = open('script.jlink', 'w')  # open J-Link script file
@@ -30,37 +36,13 @@ def jlink_download(targetname, hexname, erase=True, speed=4000):
     return ret
 
 
-def reset_one(state='pulse'):
-    jlink_script = open('script.jlink', 'w')  # open J-Link script file
-    if state == 'set' or state == 'push' or state == 'pulse':
-        jlink_script.write('r0\n')  # turn on 'reset' signal
-    else:
-        jlink_script.write('r1\n')  # turn off 'reset' signal
-    jlink_script.write('q\n')  # quit J-Link script
-    # close J-Link script file
-    jlink_script.close()
-    # execute J-Link reset set/reset depending on 'state' argument
-    os.system('jlink -CommanderScript script.jlink > jlink.log')
-    if state == 'pulse':
-        jlink_script = open('script.jlink', 'w')  # open J-Link script file
-        jlink_script.write('r1\n')  # turn off 'reset' signal
-        jlink_script.write('q\n')  # quit J-Link script
-        # close J-Link script file
-        jlink_script.close()
-        # execute J-Link erase&flash command based on J-Link script file
-        os.system('jlink -CommanderScript script.jlink > jlink.log')
-
-    # remove J-Link script file
-    os.remove("script.jlink")
-    os.remove('jlink.log')
-
-
 class Multiplexer:
-    def __init__(self, com_port='COM1'):
+    def __init__(self, targets_list, com_port='COM1'):
         self.serial = serial.Serial(com_port, 115200, timeout=0.1)  # open serial port
         self._target_no = 0
         self.serial.write(b'\n')
         self.serial.read(2137)
+        self.targets_list = targets_list
 
     def __del__(self):
         self.serial.close()
@@ -76,7 +58,31 @@ class Multiplexer:
             print('selecting target #' + str(self._target_no))
             feedback = self.serial.readline().decode()
             sending_counter += 1
-            assert (sending_counter < 4), 'more than 2 resends of command'
+            assert (sending_counter < 4), 'more than 4 resends of command'
+
+    def reset_one(self, target_no, state='pulse'):
+        self.select_target(target_no)
+        jlink_script = open('script.jlink', 'w')  # open J-Link script file
+        if state == 'set' or state == 'push' or state == 'pulse':
+            jlink_script.write('r0\n')  # turn on 'reset' signal
+        else:
+            jlink_script.write('r1\n')  # turn off 'reset' signal
+        jlink_script.write('q\n')  # quit J-Link script
+        # close J-Link script file
+        jlink_script.close()
+        # execute J-Link reset set/reset depending on 'state' argument
+        os.system('jlink -CommanderScript script.jlink > jlink.log')
+        if state == 'pulse':
+            jlink_script = open('script.jlink', 'w')  # open J-Link script file
+            jlink_script.write('r1\n')  # turn off 'reset' signal
+            jlink_script.write('q\n')  # quit J-Link script
+            # close J-Link script file
+            jlink_script.close()
+            # execute J-Link erase&flash command based on J-Link script file
+            os.system('jlink -CommanderScript script.jlink > jlink.log')
+        # remove J-Link script file
+        os.remove("script.jlink")
+        os.remove('jlink.log')
 
     def reset_all(self, state=''):
         feedback = 'ERR'
@@ -87,6 +93,12 @@ class Multiplexer:
             feedback = self.serial.readline().decode()
             sending_counter += 1
             assert (sending_counter < 4), 'more than 2 resends of command'
+
+    def select_and_download(self, target_no, erase=True, speed=4000):
+        assert target_no <= len(self.targets_list), "can't download unspecified binary to unspecified target"
+        self.select_target(target_no)
+        return jlink_download(self.targets_list[target_no].device_name,
+                               self.targets_list[target_no].hex_file, erase, speed)
 
 
 def select_test(mux):
@@ -99,30 +111,30 @@ def select_test(mux):
         time.sleep(0.1)
 
 
-def download_test(mux, target_name, hex_name, target_no, erase, speed):
-    mux.select_target(target_no)
-    jlink_download(target_name, hex_name, erase, speed)
-
-
 def reset_test(mux):
     mux.reset_all('set')
     time.sleep(0.1)
     mux.reset_all('clear')
+    time.sleep(0.1)
     mux.reset_all()
+    time.sleep(0.1)
+    mux.reset_one(5, 'pulse')
 
 
-def select_and_download(mux, target_no, binary, target_device='?', erase=True, speed=4000):
-    mux.select_target(target_no)
-    return jlink_download(target_device, binary, erase, speed)
 
-
-def test(mux, binary, target_device='?'):
+def test(mux):
     select_test(mux)
     reset_test(mux)
+
     tests_per_port = 10
-    used_ports = 1
-    for current_port in range(used_ports):
+
+    for current_port in range(len(mux.targets_list)):
         errors_per_port = 0
         for x in range(tests_per_port):
-            errors_per_port += select_and_download(mux, current_port, binary, target_device, True, 9000)
+            errors_per_port += mux.select_and_download(current_port)
         print('errors per port #' + str(current_port) + ' =', errors_per_port)
+
+
+multiplexer_handle = Multiplexer([Target('ezr.hex', 'EZR32WG330F256RXX'), Target('ezr.hex', 'EZR32WG330F256RXX')],
+                                 'COM18')
+test(multiplexer_handle)
